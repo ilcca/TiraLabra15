@@ -80,15 +80,15 @@ public class TayttoTest {
     }
     @Test
     public void alustaTayttoTestaaEtsiMaksimiArvo() {
-        int[] koot = {400,25,23,22};
-        int[] arvot = {100,90,80,70};
+        int[] koot = {400,350,25,23,22};
+        int[] arvot = {100,30,90,80,70};
 
         Tavara[] tavarat = new Tavara[koot.length];
         for (int i=0; i<koot.length; i++) {
             tavarat[i]=new Tavara(koot[i], arvot[i]);
         }
 
-        Sakki sakki = new Sakki(430);
+        Sakki sakki = new Sakki(410);
         
         Taytto taytto1 = new Taytto(tavarat, sakki);
         int vastaus = taytto1.etsiMaksimiArvo();
@@ -96,4 +96,21 @@ public class TayttoTest {
         assertEquals(240, vastaus);
     }
      
+    @Test
+    public void alustaTayttoTestaaEtsiMaksimiArvoJaJono() {
+        int[] koot = {400,350,25,23,22};
+        int[] arvot = {100,30,90,80,70};
+
+        Tavara[] tavarat = new Tavara[koot.length];
+        for (int i=0; i<koot.length; i++) {
+            tavarat[i]=new Tavara(koot[i], arvot[i]);
+        }
+
+        Sakki sakki = new Sakki(410);
+        
+        Taytto taytto1 = new Taytto(tavarat, sakki);
+        taytto1.etsiMaksimiArvoJaJono();
+        String vastaus = "Arvo: " + taytto1.annaMaxArvo() + ", jono: " + taytto1.annaMaxJono();
+        assertEquals("Arvo: 240, jono:  5 4 3", vastaus);
+    }
 }
