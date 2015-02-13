@@ -52,7 +52,7 @@ public class Taytto {
      * @return 
      */
     private int etsiMaksimiArvoRek(int paino, int lkm) {
-        System.out.println(lkm + " " + paino);
+        //System.out.println(lkm + " " + paino);
         
         // Haara käyty loppuun
         if (lkm == 0 || paino == 0) 
@@ -73,7 +73,7 @@ public class Taytto {
      * @return 
      */
     private boolean etsiMaksimiArvoJaJonoRek(int paino, int arvo, String jono, int lkm) {
-        System.out.println(lkm + " " + paino + " " + arvo);
+        //System.out.println(lkm + " " + paino + " " + arvo);
         
         // Haara käyty loppuun
         if (lkm == 0 || paino == 0) {

@@ -14,53 +14,101 @@ import java.util.Random;
  * @author ilkkaporna
  */
 public class Testi {
-  
     
-    public Testi() {
-        
-      
+    private Tavara[] tavarat;
+    private Sakki sakki;
+    private int toistokoe;
+    
+    public Testi(Tavara [] tavarat, Sakki sakki, int toistokoe) {
+        this.tavarat = tavarat;
+        this.sakki = sakki;
+        this.toistokoe = toistokoe;
     }
     
-    public void ajaTesti(int[] koot, Kontti kontti, int toistokoeLkm) {
-        Taytto taytto;
-        Paketti[] paketit;
-        long tulosSumma=0;
+    public void ajaTesti() {
         
-        for (int i=0;i<toistokoeLkm;i++) {
-            shuffleArray(koot);
-            paketit = new Paketti[koot.length];
-            int summa = 0;
-            for (int j=0; j<koot.length; j++) {
-                paketit[j]=new Paketti(koot[j]);
-                summa+=koot[j];
+        long summa1 = 0;
+        long summa2 = 0;
+        
+        for (int i=0;i<this.toistokoe;i++) {
+            //random järjestys
+            Tavara[] ar = shuffleTavarat();
+//            Tavara[] ar = this.tavarat;
+            Taytto taytto1 = new Taytto(ar, sakki);
+            TayttoDP taytto2 = new TayttoDP(ar, sakki);
+
+            long aikaAlussa = 0;
+            long aikaLopussa = 0;
+            long aika = 0;
+
+            //rotatoidaan testien ajojärjestys
+            
+            if (i%2==0) {
+
+                // Mittaus naivi-algoritmi
+                aikaAlussa = System.currentTimeMillis();
+                taytto1.etsiMaksimiArvoJaJono();            
+                aikaLopussa = System.currentTimeMillis();  
+
+                aika=aikaLopussa-aikaAlussa;
+                summa1+=aika;
+
+                // Mittaus DP -algoritmi
+                aikaAlussa = System.currentTimeMillis();
+                taytto2.etsiMaksimiArvoJaJono();            
+                aikaLopussa = System.currentTimeMillis();  
+
+                aika=aikaLopussa-aikaAlussa;
+                summa2+=aika;
             }
-            taytto = new Taytto(paketit, summa, kontti);
-            
-            long aikaAlussa = System.currentTimeMillis();
-            taytto.etsiMahtuvaSummaKombinaatioistaRek(new ArrayList(), 0, 0, summa);            
-            long aikaLopussa = System.currentTimeMillis();  
-            long aika=aikaLopussa-aikaAlussa;
-            tulosSumma+=aika;
-            System.out.println("Suoritusaika: " + aika + " " + taytto.annaRatkaisutMerkkijonona());
-            
+            else {
+
+                // Mittaus DP -algoritmi
+                aikaAlussa = System.currentTimeMillis();
+                taytto2.etsiMaksimiArvoJaJono();            
+                aikaLopussa = System.currentTimeMillis();  
+
+                aika=aikaLopussa-aikaAlussa;
+                summa2+=aika;
+
+                // Mittaus naivi-algoritmi
+                aikaAlussa = System.currentTimeMillis();
+                taytto1.etsiMaksimiArvoJaJono();            
+                aikaLopussa = System.currentTimeMillis();  
+
+                aika=aikaLopussa-aikaAlussa;
+                summa1+=aika;
+                
+            }
+            //Tarkistus, että tulos sama
+            if (taytto1.annaMaxArvo()!=taytto2.annaMaxArvo()) {
+                System.out.println("Taytto1: Arvo: " + taytto1.annaMaxArvo() + " , jono :" + taytto1.annaMaxJono());
+                System.out.println("Taytto2: Arvo: " + taytto2.annaMaxArvo() + " , jono :" + taytto2.annaMaxJono());            
+                break;
+            }
         }
-        long keskiarvo = tulosSumma/toistokoeLkm;
-        System.out.println(toistokoeLkm + ":n satunnaisjärjestyksessä käydyn haun keskiarvo(ms): " + keskiarvo + ", yhteenlaskettu aika: " + tulosSumma);
+        
+        long keskiarvo1 = summa1/toistokoe;
+        long keskiarvo2 = summa2/toistokoe;
+        System.out.println(toistokoe + ":n ajon summa Naiivilla: " + summa1 + ", DP:lla: "+ summa2);
         
     
     }
     
-    private void shuffleArray(int[] ar)
+    private Tavara[] shuffleTavarat()
     {
+      Tavara[] ar=this.tavarat;
       Random rnd = new Random();
       for (int i = ar.length - 1; i > 0; i--)
       {
         int index = rnd.nextInt(i + 1);
         // Simple swap
-        int a = ar[index];
+        Tavara a = ar[index];
         ar[index] = ar[i];
         ar[i] = a;
       }
+      return ar;
+    
     }    
 
 }
