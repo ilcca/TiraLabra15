@@ -1,6 +1,5 @@
 package com.mycompany.tiralabra_maven;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /*
@@ -46,17 +45,17 @@ public class Testi {
             if (i%2==0) {
 
                 // Mittaus naivi-algoritmi
-                aikaAlussa = System.currentTimeMillis();
+                aikaAlussa = System.nanoTime();
                 taytto1.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.currentTimeMillis();  
+                aikaLopussa = System.nanoTime(); 
 
                 aika=aikaLopussa-aikaAlussa;
                 summa1+=aika;
 
                 // Mittaus DP -algoritmi
-                aikaAlussa = System.currentTimeMillis();
+                aikaAlussa = System.nanoTime();
                 taytto2.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.currentTimeMillis();  
+                aikaLopussa = System.nanoTime(); 
 
                 aika=aikaLopussa-aikaAlussa;
                 summa2+=aika;
@@ -64,17 +63,17 @@ public class Testi {
             else {
 
                 // Mittaus DP -algoritmi
-                aikaAlussa = System.currentTimeMillis();
+                aikaAlussa = System.nanoTime();
                 taytto2.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.currentTimeMillis();  
+                aikaLopussa = System.nanoTime(); 
 
                 aika=aikaLopussa-aikaAlussa;
                 summa2+=aika;
 
                 // Mittaus naivi-algoritmi
-                aikaAlussa = System.currentTimeMillis();
+                aikaAlussa = System.nanoTime();
                 taytto1.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.currentTimeMillis();  
+                aikaLopussa = System.nanoTime(); 
 
                 aika=aikaLopussa-aikaAlussa;
                 summa1+=aika;
@@ -90,7 +89,7 @@ public class Testi {
         
         long keskiarvo1 = summa1/toistokoe;
         long keskiarvo2 = summa2/toistokoe;
-        System.out.println(toistokoe + ":n ajon summa Naiivilla: " + summa1 + ", DP:lla: "+ summa2);
+        System.out.println(toistokoe + ":n ajon keskiarvo (ns) Naiivilla: " + keskiarvo1/1000 + ", DP:lla: "+ keskiarvo2/1000);
         
     
     }
