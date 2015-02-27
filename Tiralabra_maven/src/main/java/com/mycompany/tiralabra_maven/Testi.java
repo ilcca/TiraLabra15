@@ -1,5 +1,6 @@
 package com.mycompany.tiralabra_maven;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /*
@@ -14,13 +15,21 @@ import java.util.Random;
  */
 public class Testi {
     
+    private String nimi;
     private Tavara[] tavarat;
     private Sakki sakki;
     private int toistokoe;
+    private int koko;
     
-    public Testi(Tavara [] tavarat, Sakki sakki, int toistokoe) {
-        this.tavarat = tavarat;
-        this.sakki = sakki;
+    public Testi(String nimi, int[] koot, int [] arvot, int sakki, int toistokoe) {
+        this.nimi=nimi;
+
+        this.tavarat = new Tavara[koot.length];
+        for (int i=0; i<koot.length; i++) {
+            this.tavarat[i]=new Tavara(koot[i], arvot[i]);
+        }
+        this.sakki = new Sakki(sakki);
+        this.koko=this.tavarat.length;
         this.toistokoe = toistokoe;
     }
     
@@ -28,68 +37,90 @@ public class Testi {
         
         long summa1 = 0;
         long summa2 = 0;
+        int laskuri1=0; //test
+        int laskuri2=0;
         
-        for (int i=0;i<this.toistokoe;i++) {
+        
+        //rotatoidaan testien suoritusjärjestystä kerran
+        int rot = 2;
+        for (int i=0;i<rot;i++) {
             //random järjestys
-            Tavara[] ar = shuffleTavarat();
-//            Tavara[] ar = this.tavarat;
-            Taytto taytto1 = new Taytto(ar, sakki);
-            TayttoDP taytto2 = new TayttoDP(ar, sakki);
+            //Tavara[] ar = shuffleTavarat();
+
+            Tavara[] ar = this.tavarat;
+            Taytto tayttoN = new Taytto(ar, sakki);
+            TayttoDP tayttoDP = new TayttoDP(ar, sakki);
 
             long aikaAlussa = 0;
             long aikaLopussa = 0;
             long aika = 0;
 
+            int sisatoisto=this.toistokoe;
             //rotatoidaan testien ajojärjestys
-            
-            if (i%2==0) {
+            long sum1=0; 
+            long sum2=0; 
 
-                // Mittaus naivi-algoritmi
-                aikaAlussa = System.nanoTime();
-                taytto1.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.nanoTime(); 
+            //ignoorataan 10 ensimmäistä tuloksista, lisätään siksi 10 ylimääräistä toistokierrosta
+            for (int j=0;j<sisatoisto;j++) {
 
-                aika=aikaLopussa-aikaAlussa;
-                summa1+=aika;
+                if (i%2==0) {
+                    laskuri1++;
 
-                // Mittaus DP -algoritmi
-                aikaAlussa = System.nanoTime();
-                taytto2.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.nanoTime(); 
+                    // Mittaus naivi-algoritmi
+                    aikaAlussa = System.nanoTime();
+                    tayttoN.etsiMaksimiArvoJaJono();            
+                    aikaLopussa = System.nanoTime(); 
 
-                aika=aikaLopussa-aikaAlussa;
-                summa2+=aika;
-            }
-            else {
+                    aika=aikaLopussa-aikaAlussa;
+                    //ignoorataan 10 ensimmäistä tuloksista
+                    if(j>=0) sum1+=aika;
 
-                // Mittaus DP -algoritmi
-                aikaAlussa = System.nanoTime();
-                taytto2.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.nanoTime(); 
+                    // Mittaus DP -algoritmi
+                    aikaAlussa = System.nanoTime();
+                    tayttoDP.etsiMaksimiArvoJaJono();            
+                    aikaLopussa = System.nanoTime(); 
 
-                aika=aikaLopussa-aikaAlussa;
-                summa2+=aika;
+                    aika=aikaLopussa-aikaAlussa;
+                    if(j>=0) sum2+=aika;
+                }
+                else {
+                    laskuri2++; //test
 
-                // Mittaus naivi-algoritmi
-                aikaAlussa = System.nanoTime();
-                taytto1.etsiMaksimiArvoJaJono();            
-                aikaLopussa = System.nanoTime(); 
+                    // Mittaus DP -algoritmi
+                    aikaAlussa = System.nanoTime();
+                    tayttoDP.etsiMaksimiArvoJaJono();            
+                    aikaLopussa = System.nanoTime(); 
 
-                aika=aikaLopussa-aikaAlussa;
-                summa1+=aika;
-                
-            }
-            //Tarkistus, että tulos sama
-            if (taytto1.annaMaxArvo()!=taytto2.annaMaxArvo()) {
-                System.out.println("Taytto1: Arvo: " + taytto1.annaMaxArvo() + " , jono :" + taytto1.annaMaxJono());
-                System.out.println("Taytto2: Arvo: " + taytto2.annaMaxArvo() + " , jono :" + taytto2.annaMaxJono());            
-                break;
-            }
-        }
+                    aika=aikaLopussa-aikaAlussa;
+                    if(j>=0) sum2+=aika;
         
-        long keskiarvo1 = summa1/toistokoe;
-        long keskiarvo2 = summa2/toistokoe;
-        System.out.println(toistokoe + ":n ajon keskiarvo (ns) Naiivilla: " + keskiarvo1/1000 + ", DP:lla: "+ keskiarvo2/1000);
+                    // Mittaus naivi-algoritmi
+                    aikaAlussa = System.nanoTime();
+                    tayttoN.etsiMaksimiArvoJaJono();            
+                    aikaLopussa = System.nanoTime(); 
+
+                    aika=aikaLopussa-aikaAlussa;
+                    if (j>=0) sum1+=aika;
+                }
+
+                //Tarkistus, että tulos sama
+                if (tayttoN.annaMaxArvo()!=tayttoDP.annaMaxArvo()) {
+                    System.out.println("Taytto1: Arvo: " + tayttoN.annaMaxArvo() + " , jono :" + tayttoN.annaMaxJono());
+                    System.out.println("Taytto2: Arvo: " + tayttoDP.annaMaxArvo() + " , jono :" + tayttoDP.annaMaxJono());            
+                    break;
+                }
+
+            }
+            summa1+=sum1/(sisatoisto);
+            summa2+=sum2/(sisatoisto);
+            
+        }
+//        System.out.println(laskuri1);
+//        System.out.println(laskuri2);
+
+        long keskiarvo1 = summa1/rot;
+        long keskiarvo2 = summa2/rot;
+        System.out.println(this.nimi + ": sakki " + this.sakki.annaKoko() + ", lkm " + this.koko + ", toistot " + toistokoe + ", keskiarvo (ms) Naiivi: " + keskiarvo1/1000 + ", DP: " + keskiarvo2/1000);
         
     
     }
